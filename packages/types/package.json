@@ -1,0 +1,10 @@
+{
+  "name": "@repo/types",
+  "version": "1.0.0",
+  "description": "Shared types for the repo",
+  "main": "index.d.ts",
+  "types": "index.d.ts",
+  "files": [
+    "index.d.ts"
+  ]
+}
