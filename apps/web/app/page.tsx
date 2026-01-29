@@ -1,12 +1,22 @@
-import { Button } from "@/components/ui/button";
-import React from "react";
+import CompanionCard from "@/components/CompanionCard";
+import CompanionList from "@/components/CompanionList";
+import Cta from "@/components/Cta";
 
 const Page = () => {
   return (
-    <div>
-      <h1 className="text-2xl underline">Welcome to the Home Page what is</h1>
-      <Button>Lets get started</Button>
-    </div>
+    <main>
+      <h1>Popular Companions</h1>
+      <section className="home-section">
+        <CompanionCard />
+        <CompanionCard />
+        <CompanionCard />
+      </section>
+
+      <section className="home-section">
+        <CompanionList />
+        <Cta />
+      </section>
+    </main>
   );
 };
 
