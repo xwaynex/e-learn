@@ -1,37 +1,13 @@
-import Image, { type ImageProps } from "next/image";
-import styles from "./page.module.css";
-import { getUsers } from "../server/users";
-import { User } from "@repo/types";
+import { Button } from "@/components/ui/button";
+import React from "react";
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
-
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
+const Page = () => {
   return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
-
-export default async function Home() {
-  const users: User[] = await getUsers();
-
-  return (
-    <div className={styles.page}>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {" "}
-            {user.name} - {user.email}
-          </li>
-        ))}
-      </ul>
+    <div>
+      <h1 className="text-2xl underline">Welcome to the Home Page what is</h1>
+      <Button>Lets get started</Button>
     </div>
   );
-}
+};
+
+export default Page;
