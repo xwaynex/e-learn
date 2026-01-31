@@ -1,37 +1,49 @@
-import Image, { type ImageProps } from "next/image";
-import styles from "./page.module.css";
-import { getUsers } from "../server/users";
-import { User } from "@repo/types";
+import CompanionCard from "@/components/CompanionCard";
+import CompanionList from "@/components/CompanionList";
+import Cta from "@/components/Cta";
+import { recentSessions } from "./constants";
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
-
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
+const Page = () => {
   return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
+    <main>
+      <h1>Popular Companions</h1>
+      <section className="home-section">
+        <CompanionCard
+          id="123"
+          name="Neura the Brainy Explorer"
+          topic="Neural Network of the Brain"
+          subject="science"
+          duration={45}
+          color="#ffda6e"
+        />
+        <CompanionCard
+          id="456"
+          name="Countsy the Number Wizard"
+          topic="Derivatives & Integrals"
+          subject="maths"
+          duration={30}
+          color="#e5d0ff"
+        />
+        <CompanionCard
+          id="789"
+          name="Verba the Vocabulary Builder"
+          topic="English Literature "
+          subject="language"
+          duration={30}
+          color="#BDE7FF"
+        />
+      </section>
+
+      <section className="home-section">
+        <CompanionList
+          title="Recently completed sessions"
+          companions={recentSessions}
+          classNames="w-2/3 max-lg:w-full"
+        />
+        <Cta />
+      </section>
+    </main>
   );
 };
 
-export default async function Home() {
-  const users: User[] = await getUsers();
-
-  return (
-    <div className={styles.page}>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {" "}
-            {user.name} - {user.email}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+export default Page;
