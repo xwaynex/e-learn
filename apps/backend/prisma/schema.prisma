@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User {
+  id            String          @id @default(uuid())
+  email         String          @unique
+  passwordHash  String?         // Nullable for users who only use Passkeys
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  // For Passkeys (WebAuthn)
+  authenticators Authenticator[]
+}
+
+model Authenticator {
+  credentialID         String   @id
+  credentialPublicKey  Bytes
+  counter              BigInt
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?  // comma-separated list
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model companions {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  name            String?           @db.VarChar
+  subject         String?           @db.VarChar
+  topic           String?           @db.VarChar
+  style           String?           @db.VarChar
+  voice           String?           @db.VarChar
+  duration        BigInt?
+  author          String?           @db.VarChar
+  session_history session_history[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model session_history {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at   DateTime    @default(now()) @db.Timestamptz(6)
+  user_id      String?     @db.VarChar
+  companion_id String?     @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companions   companions? @relation(fields: [companion_id], references: [id], onDelete: Cascade)
+}
