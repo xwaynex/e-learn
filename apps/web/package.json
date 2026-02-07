@@ -19,6 +19,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@repo/types": "workspace:*",
     "@repo/ui": "workspace:*",
+    "@supabase/supabase-js": "^2.95.3",
     "@tailwindcss/postcss": "^4.1.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
