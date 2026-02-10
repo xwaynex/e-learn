@@ -19,6 +19,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@repo/types": "workspace:*",
     "@repo/ui": "workspace:*",
+    "@sentry/nextjs": "^10",
     "@supabase/supabase-js": "^2.95.3",
     "@tailwindcss/postcss": "^4.1.18",
     "@vapi-ai/web": "^2.5.2",
