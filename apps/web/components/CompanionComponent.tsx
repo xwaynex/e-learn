@@ -27,6 +27,7 @@ const CompanionComponent = ({
   const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [messages, setMessages] = useState<SavedMessage[]>([]);
 
   const lottieRef = useRef<LottieRefCurrentProps>(null);
 
@@ -44,7 +45,13 @@ const CompanionComponent = ({
     const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
     const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
 
-    const onMessage = () => {};
+    const onMessage = (message: Message) => {
+      if (message.type === "transcript" && message.transcriptType === "final") {
+        const newMessages = { role: message.role, content: message.transcript };
+
+        setMessages((prev) => [newMessages, ...prev]);
+      }
+    };
 
     const onSpeechStart = () => setIsSpeaking(true);
     const omSpeechEnd = () => setIsSpeaking(false);
@@ -79,7 +86,7 @@ const CompanionComponent = ({
   const handleCall = async () => {
     setCallStatus(CallStatus.CONNECTING);
 
-    const baseAssistant = configureAssistant(voice, style)
+    const baseAssistant = configureAssistant(voice, style);
 
     const assistantOverrides = {
       ...baseAssistant,
@@ -152,7 +159,11 @@ const CompanionComponent = ({
             />
             <p className="font-bold text-2xl"> {userName}</p>
           </div>
-          <button className="btn-mic" onClick={toggleMicrophone}>
+          <button
+            className="btn-mic"
+            onClick={toggleMicrophone}
+            disabled={callStatus !== CallStatus.ACTIVE}
+          >
             <Image
               src={isMuted ? "/icons/mic-off.svg" : "/icons/mic-on.svg"}
               alt="mic"
@@ -182,7 +193,23 @@ const CompanionComponent = ({
         </div>
       </section>
       <section className="transcript">
-        <div className="transcript-messages no-scrollbar">MESSAGES</div>
+        <div className="transcript-messages no-scrollbar">
+          {messages.map((message, i) => {
+            if (message.role === "assistant") {
+              return (
+                <p key={i} className="max-sm:text-sm">
+                  {name.split(" ")[0]?.replace("/[.,]/g, ", "")}
+                </p>
+              );
+            } else {
+              return (
+                <p key={i} className="text-primary max-sm:text-sm">
+                  {userName} : {message.content}
+                </p>
+              );
+            }
+          })}
+        </div>
         <div className="transcript-fade" />
       </section>
     </section>
