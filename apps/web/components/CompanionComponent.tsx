@@ -86,11 +86,11 @@ const CompanionComponent = ({
   const handleCall = async () => {
     setCallStatus(CallStatus.CONNECTING);
 
-    const baseAssistant = configureAssistant(voice, style);
+    const baseAssistant = configureAssistant(voice, style, subject, topic);
 
     const assistantOverrides = {
       ...baseAssistant,
-      variableValues: { subject, topic, style },
+      // variableValues: { subject, topic, style },
       clientMessages: ["transcript", "hang", "function-call"],
       serverMessages: ["hang", "function-call"],
     };
@@ -198,13 +198,13 @@ const CompanionComponent = ({
             if (message.role === "assistant") {
               return (
                 <p key={i} className="max-sm:text-sm">
-                  {name.split(" ")[0]?.replace("/[.,]/g, ", "")}
+                  {name.split(" ")[0]?.replace("/[.,]/g, ", "")}: {message.content}
                 </p>
               );
             } else {
               return (
                 <p key={i} className="text-primary max-sm:text-sm">
-                  {userName} : {message.content}
+                  {userName}: {message.content}
                 </p>
               );
             }
