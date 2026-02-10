@@ -17,7 +17,13 @@ const CompanionSession = async ({ params }: CompanionSessionProps) => {
   if (!companion) redirect("/companions");
 
   const { name, subject, title, topic, duration } = companion;
-  const user = await currentUser();
+  let user = null;
+
+  try {
+    user = await currentUser();
+  } catch (error) {
+    console.error("⚠️ Clerk Network Glitch:", error);
+  }
 
   console.log("User:", user);
 
