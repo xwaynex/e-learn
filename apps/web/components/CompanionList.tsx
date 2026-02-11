@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -17,13 +18,13 @@ interface CompanionListProps {
 }
 
 const CompanionList = ({
-  // title,
+  title,
   companions,
-  // classNames,
+  classNames,
 }: CompanionListProps) => {
   return (
-    <article>
-      <h2 className="font-bold text-3xl">Recent Sessions</h2>
+    <article className={cn('companion-list', classNames)}>
+      <h2 className="font-bold text-3xl">{title}</h2>
       <Table>
         <TableHeader>
           <TableRow>
