@@ -58,6 +58,10 @@ export class AuthService {
     return this.generateToken(user.id, user.email);
   }
 
+  async signInOpaque() {}
+
+  async signInBasicAuth() {}
+
   private async generateToken(userId: string, email: string) {
     const payload = { sub: userId, email };
     return {
