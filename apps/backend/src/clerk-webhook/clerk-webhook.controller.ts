@@ -11,6 +11,7 @@ import {
 import { ClerkWebhookService } from './clerk-webhook.service';
 import { Request, Response } from 'express';
 import { Webhook } from 'svix';
+import type { WebhookEvent } from '@clerk/backend';
 
 @Controller('webhook')
 export class ClerkWebhookController {
@@ -45,18 +46,18 @@ export class ClerkWebhookController {
     const secret = this.WEBHOOK_SECRET;
     const wh = new Webhook(secret);
 
-    let evt: any;
+    let evt: WebhookEvent;
 
     try {
       evt = wh.verify(payload, {
         'svix-id': svix_id,
         'svix-signature': svix_signature,
         'svix-timestamp': svix_timestamp,
-      });
-    } catch (err) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ error: `Invalid Signature: ${err}` });
+      }) as WebhookEvent;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+
+      throw new BadRequestException(`Invalid Signature ${message}`);
     }
 
     await this.clerkWebhookService.processWebhook(evt);

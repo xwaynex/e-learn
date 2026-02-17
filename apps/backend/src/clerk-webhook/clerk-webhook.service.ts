@@ -1,30 +1,42 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { WebhookEvent } from '@clerk/backend';
-import { CreateClerkWebhookDto } from './dto/create-clerk-webhook.dto';
-import { UpdateClerkWebhookDto } from './dto/update-clerk-webhook.dto';
+import type { WebhookEvent, UserJSON } from '@clerk/backend';
+
+// note: type webhookEvent is not a Discriminated Union and typescript can't narrow safely so we don't extract from webhook we use UserJson
+type ClerkUserEvent =
+  | {
+      type: 'user.created';
+      data: UserJSON;
+    }
+  | {
+      type: 'user.updated';
+      data: UserJSON;
+    }
+  | {
+      type: 'user.deleted';
+      data: UserJSON;
+    };
 
 @Injectable()
 export class ClerkWebhookService {
   private readonly logger = new Logger(ClerkWebhookService.name);
 
   async processWebhook(evt: WebhookEvent) {
-    const { type, data } = evt;
-
-    switch (type) {
+    const event = evt as ClerkUserEvent;
+    switch (event.type) {
       case 'user.created':
-        await this.handleUserCreated(data);
+        await this.handleUserCreated(event.data);
         break;
 
       case 'user.updated':
-        await this.handleUserUpdated(data);
+        await this.handleUserUpdated(event.data);
         break;
 
       case 'user.deleted':
-        await this.handleUserDeleted(data);
+        await this.handleUserDeleted(event.data);
     }
   }
 
-  private async handleUserCreated(data) {
+  private async handleUserCreated(data: UserJSON) {
     const { id, email_addresses, first_name, last_name } = data;
     const email = email_addresses[0]?.email_address;
 
