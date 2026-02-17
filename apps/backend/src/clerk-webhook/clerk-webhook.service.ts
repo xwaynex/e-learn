@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { WebhookEvent } from '@clerk/backend';
 import { CreateClerkWebhookDto } from './dto/create-clerk-webhook.dto';
 import { UpdateClerkWebhookDto } from './dto/update-clerk-webhook.dto';
 
 @Injectable()
 export class ClerkWebhookService {
-  create(createClerkWebhookDto: CreateClerkWebhookDto) {
-    return 'This action adds a new clerkWebhook';
+  private readonly logger = new Logger(ClerkWebhookService.name);
+
+  async processWebhook(evt: WebhookEvent) {
+    const { type, data } = evt;
+
+    switch (type) {
+      case 'user.created':
+        await this.handleUserCreated(data);
+        break;
+
+      case 'user.updated':
+        await this.handleUserUpdated(data);
+        break;
+
+      case 'user.deleted':
+        await this.handleUserDeleted(data);
+    }
   }
 
-  findAll() {
-    return `This action returns all clerkWebhook`;
-  }
+  private async handleUserCreated(data) {
+    const { id, email_addresses, first_name, last_name } = data;
+    const email = email_addresses[0]?.email_address;
 
-  findOne(id: number) {
-    return `This action returns a #${id} clerkWebhook`;
+    this.logger.log(`Creating User ${id} (${email})`);
   }
-
-  update(id: number, updateClerkWebhookDto: UpdateClerkWebhookDto) {
-    return `This action updates a #${id} clerkWebhook`;
+  private async handleUserUpdated(data) {
+    this.logger.log(`updating User ${data}`);
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} clerkWebhook`;
+  private async handleUserDeleted(data) {
+    this.logger.log(`Deleting User ${data}`);
   }
 }
