@@ -27,7 +27,7 @@ export class ClerkWebhookController {
     // 1. Get Headers
     const svix_id = headers['svix-id'];
     const svix_timestamp = headers['svix-timestamp'];
-    const svix_signature = headers['svix-timestamp'];
+    const svix_signature = headers['svix-signature'];
 
     if (!svix_id || !svix_signature || !svix_timestamp) {
       throw new BadRequestException('Missing svix headers');

@@ -31,9 +31,9 @@ export class ClerkWebhookService {
     this.logger.log(`Creating User ${id} (${email})`);
   }
   private async handleUserUpdated(data) {
-    this.logger.log(`updating User ${data}`);
+    this.logger.log(`Updating User ${data.id}`);
   }
   private async handleUserDeleted(data) {
-    this.logger.log(`Deleting User ${data}`);
+    this.logger.log(`Deleting User ${data.id}`);
   }
 }
