@@ -58,18 +58,29 @@ export class ClerkWebhookService {
     this.logger.log(`Creating User ${id} (${email})`);
 
     // todo: change this to make use of the userService
-    return this.prisma.user.create({
-      data: {
-        clerkId: id,
-        email,
-        first_name,
-        last_name,
-      },
+    return this.userService.create({
+      clerkId: id,
+      email: email,
+      firstName: first_name,
+      lastName: last_name,
+      password: null,
     });
   }
 
-  private async handleUserUpdated(data) {
+  private async handleUserUpdated(data: UserJSON) {
+    const { id, first_name, last_name, email_addresses } = data;
+    const email = email_addresses[0].email_address;
+    const user = await this.userService.findByClerkId(id);
+
+    if (!user) throw new Error('User does not exist');
+
     this.logger.log(`Updating User ${data.id}`);
+
+    return await this.userService.updateByClerkId(id, {
+      email: email, // Update email if it changed in Clerk
+      firstName: first_name,
+      lastName: last_name,
+    });
   }
 
   private async handleUserDeleted(data: UserJSON) {
