@@ -95,8 +95,9 @@ const CompanionComponent = ({
     const assistantOverrides = {
       ...baseAssistant,
       // variableValues: { subject, topic, style },
-      clientMessages: "transcript" as const,
-      serverMessages: "hang" as const,
+      // Cast these to "any" to satisfy the compiler while keeping the Array structure for the API
+      clientMessages: ["transcript"] as any,
+      serverMessages: ["hang"] as any,
     };
 
     vapi.start(assistantOverrides);

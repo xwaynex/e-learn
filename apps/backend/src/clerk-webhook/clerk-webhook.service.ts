@@ -46,7 +46,8 @@ export class ClerkWebhookService {
     const { id, email_addresses, first_name, last_name } = data;
     const email = email_addresses[0]?.email_address;
     if (!email) {
-      throw new Error('User has no email address');
+      this.logger.warn(`User ${id} created without email`);
+      return;
     }
 
     const existingUser = await this.userService.findByEmail(email);
@@ -56,20 +57,39 @@ export class ClerkWebhookService {
 
     this.logger.log(`Creating User ${id} (${email})`);
 
-    return this.prisma.user.create({
-      data: {
-        clerkId: id,
-        email,
-        first_name,
-        last_name,
-      },
+    // todo: change this to make use of the userService
+    return this.userService.create({
+      clerkId: id,
+      email: email,
+      firstName: first_name,
+      lastName: last_name,
+      password: null,
     });
   }
 
-  private async handleUserUpdated(data) {
+  private async handleUserUpdated(data: UserJSON) {
+    const { id, first_name, last_name, email_addresses } = data;
+    const email = email_addresses[0].email_address;
+    const user = await this.userService.findByClerkId(id);
+
+    if (!user) throw new Error('User does not exist');
+
     this.logger.log(`Updating User ${data.id}`);
+
+    return await this.userService.updateByClerkId(id, {
+      email: email, // Update email if it changed in Clerk
+      firstName: first_name,
+      lastName: last_name,
+    });
   }
-  private async handleUserDeleted(data) {
+
+  private async handleUserDeleted(data: UserJSON) {
+    const user = await this.userService.findByClerkId(data.id);
+
+    if (!user) throw new Error('User does not exist ');
+
     this.logger.log(`Deleting User ${data.id}`);
+
+    return await this.userService.deleteByClerkId(data.id);
   }
 }

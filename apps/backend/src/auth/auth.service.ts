@@ -34,6 +34,8 @@ export class AuthService {
       password: passwordHash,
     });
 
+    console.log('we just created a new user this is their info:', newUser);
+
     // return token
     return this.generateToken(newUser.id, newUser.email);
   }
@@ -64,6 +66,8 @@ export class AuthService {
 
   private async generateToken(userId: string, email: string) {
     const payload = { sub: userId, email };
+
+    console.log('the payload', payload);
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
